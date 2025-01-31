@@ -9,6 +9,9 @@ class Orden extends Model
 {
     use HasFactory;
 
+        // Especifica el nombre de la tabla
+        protected $table = 'ordenes';
+        
     protected $fillable = ['usuario_id', 'total', 'estado', 'fecha_entrega'];
 
     public function usuario()

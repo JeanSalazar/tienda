@@ -16,16 +16,21 @@ class AutenticacionControlador extends Controller
     {
         $request->validate([
             'nombre' => 'required|string',
-            'correo' => 'required|string|unique:usuarios,correo',
+            'correo' => 'required|string|email',
             'contrasena' => 'required|string|confirmed',
         ]);
+    
+        // Verificar si el correo ya está registrado
+        if (Usuario::where('correo', $request->correo)->exists()) {
+            return response()->json(['error' => 'El correo ya está registrado.'], 422);
+        }
 
         $usuario = Usuario::create([
             'nombre' => $request->nombre,
             'correo' => $request->correo,
-            'contrasena' => Hash::make($request->contrasena),
+            'contrasena' => Hash::make($request->contrasena), // Asegúrate de usar Hash::make
         ]);
-
+    
         return response()->json($usuario, 201);
     }
 
@@ -35,27 +40,38 @@ class AutenticacionControlador extends Controller
             'correo' => 'required|string',
             'contrasena' => 'required|string',
         ]);
-
-        if (!Auth::attempt($request->only('correo', 'contrasena'))) {
+    
+        // Buscar al usuario por correo
+        $usuario = Usuario::where('correo', $request->correo)->first();
+    
+        // Verificar si el usuario existe y si la contraseña es correcta
+        if (!$usuario || !Hash::check($request->contrasena, $usuario->contrasena)) {
             return response()->json(['mensaje' => 'Credenciales incorrectas'], 401);
         }
-
-        $usuario = $request->user();
+    
+        // Generar token de autenticación
         $token = $usuario->createToken('token-name')->plainTextToken;
-
+    
         return response()->json(['usuario' => $usuario, 'token' => $token], 200);
     }
     
+
+
+
     public function olvidoContrasena(Request $request)
-    {
-        $request->validate(['correo' => 'required|email']);
+{
+    $request->validate([
+        'email' => 'required|email|exists:usuarios,correo'
+    ]);
 
-        $status = Password::sendResetLink($request->only('correo'));
+    $status = Password::sendResetLink([
+        'email' => $request->email
+    ]);
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['mensaje' => 'Enlace de recuperación enviado'], 200)
-            : response()->json(['error' => 'No se pudo enviar el enlace'], 500);
-    }
+    return $status === Password::RESET_LINK_SENT
+        ? response()->json(['message' => 'Correo de recuperación enviado.'])
+        : response()->json(['error' => 'No se pudo enviar el correo.'], 400);
+}
 
 
 }
