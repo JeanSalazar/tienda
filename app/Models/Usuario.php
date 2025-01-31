@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // O Laravel\Passport\HasApiTokens según el caso
-
+use Spatie\Permission\Traits\HasRoles;
 
 class Usuario extends Authenticatable implements CanResetPassword
 {
-    use HasApiTokens, Notifiable, HasFactory;
+    use HasApiTokens, Notifiable, HasFactory, HasRoles;
 
     protected $fillable = ['nombre', 'correo', 'apellido', 'celular', 'contrasena'];
     protected $hidden = ['contrasena'];
