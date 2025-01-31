@@ -23,8 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categorias', CategoriaController::class);
     Route::get('ordenes/{id}/boleta', [OrdenController::class, 'generarBoleta']);
 
-
+    // Pagos
+    Route::post('pagar', [PagoController::class, 'pagar']);
 });
 
-// Pagos
-Route::post('pagar', [PagoController::class, 'pagar']);

@@ -17,11 +17,16 @@ class UserSeeder extends Seeder
         // Crear 10 usuarios de prueba
         Usuario::factory(10)->create();
 
-        // Crear un usuario admin por defecto
-        /*Usuario::create([
-            'nombre' => 'Admin',
-            'correo' => 'admin@example.com',
-            'contrasena' => Hash::make('admin123'), // Cambia la contraseña si es necesario
-        ]);*/
+        // Crear un usuario admin por defecto (si no existe)
+        Usuario::firstOrCreate(
+            ['correo' => 'jkristofersa@gmail.com'], // Atributos para buscar
+            [ // Atributos para crear si no existe
+                'nombre' => 'Kristofer',
+                'apellido' => 'Salazar',
+                'celular' => '925966069',
+                'correo' => 'jkristofersa@gmail.com',
+                'contrasena' => Hash::make('admin123'),
+            ]
+        );
     }
 }

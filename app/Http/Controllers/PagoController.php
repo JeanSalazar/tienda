@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CompraRealizada;
+use App\Models\Orden;
+use Culqi\Culqi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Stripe;
@@ -12,13 +15,18 @@ class PagoController extends Controller
     
     public function pagar(Request $request)
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
+        // Configurar la clave secreta de Culqi
+        $culqi = new Culqi([
+            'api_key' => env('CULQI_SECRET_KEY')
+        ]);
+        
         try {
-            $charge = Charge::create([
+            // Crear un cargo en Culqi
+            $charge = $culqi->Charges->create([
                 'amount' => $request->monto * 100, // Monto en centavos
-                'currency' => 'usd',
-                'source' => $request->stripeToken,
+                'currency_code' => 'PEN', // Moneda en soles
+                'email' => $request->user()->correo, // Correo del usuario
+                'source_id' => $request->culqiToken, // Token generado en el frontend
                 'description' => 'Compra en Nanotech Store',
             ]);
 
@@ -29,8 +37,8 @@ class PagoController extends Controller
                 'fecha_entrega' => now()->addDays(5),
             ]);
 
-            // Enviar correo
-            Mail::to($request->user()->correo)->send(new \App\Mail\CompraRealizada($orden));
+            // Enviar correo de confirmación
+            Mail::to($request->user()->correo)->send(new CompraRealizada($orden));
 
             return response()->json(['mensaje' => 'Pago exitoso', 'orden' => $orden], 200);
         } catch (\Exception $e) {
