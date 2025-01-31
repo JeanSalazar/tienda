@@ -20,7 +20,7 @@ class OrdenSeeder extends Seeder
         Orden::factory()->create([
             'usuario_id' => $usuario->id,
             'total' => 930.79,
-            'estado' => 'completada',
+            'estado' => '2',
             'fecha_entrega' => now()->addDays(15),
         ]);
     });

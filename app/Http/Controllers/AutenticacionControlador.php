@@ -16,7 +16,9 @@ class AutenticacionControlador extends Controller
     {
         $request->validate([
             'nombre' => 'required|string',
+            'apellido' => 'required|string',
             'correo' => 'required|string|email',
+            'celular' => 'nullable|string|regex:/^[0-9]{9}$/',
             'contrasena' => 'required|string|confirmed',
         ]);
     
@@ -27,6 +29,8 @@ class AutenticacionControlador extends Controller
 
         $usuario = Usuario::create([
             'nombre' => $request->nombre,
+            'apellido' => $request->apellido,
+            'celular' => $request->celular,
             'correo' => $request->correo,
             'contrasena' => Hash::make($request->contrasena), // Asegúrate de usar Hash::make
         ]);

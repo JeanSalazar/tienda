@@ -15,7 +15,7 @@ class OrdenFactory extends Factory
         return [
             'usuario_id' => $this->faker->numberBetween(1, 10), // Asegúrate de que existan usuarios
             'total' => $this->faker->randomFloat(2, 50, 1000),
-            'estado' => $this->faker->randomElement(['pendiente', 'completada']),
+            'estado' => $this->faker->randomElement(['1', '2']),
             'fecha_entrega' => $this->faker->dateTimeBetween('now', '+1 month'),
         ];
     }

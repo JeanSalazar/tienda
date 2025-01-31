@@ -18,7 +18,6 @@ class ProductoFactory extends Factory
             'nombre' => $this->faker->word,
             'descripcion' => $this->faker->sentence,
             'precio_base' => $this->faker->randomFloat(2, 10, 1000),
-            'igv' => 0.18,
             'precio_final' => function (array $attributes) {
                 return $attributes['precio_base'] * 1.18;
             },

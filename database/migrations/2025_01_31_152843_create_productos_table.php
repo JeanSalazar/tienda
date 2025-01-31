@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nombre');
             $table->text('descripcion');
             $table->decimal('precio_base', 8, 2);
-            $table->decimal('igv', 8, 2)->default(0.18);
             $table->decimal('precio_final', 8, 2);
             $table->integer('stock');
             $table->foreignId('categoria_id')->constrained('categorias');

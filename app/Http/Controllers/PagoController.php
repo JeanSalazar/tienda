@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Stripe;
 use Stripe\Charge;
 
@@ -29,7 +30,7 @@ class PagoController extends Controller
             ]);
 
             // Enviar correo
-            \Mail::to($request->user()->correo)->send(new \App\Mail\CompraRealizada($orden));
+            Mail::to($request->user()->correo)->send(new \App\Mail\CompraRealizada($orden));
 
             return response()->json(['mensaje' => 'Pago exitoso', 'orden' => $orden], 200);
         } catch (\Exception $e) {

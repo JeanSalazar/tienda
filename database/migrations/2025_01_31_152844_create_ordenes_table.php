@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios');
             $table->decimal('total', 8, 2);
-            $table->string('estado')->default('pendiente');
+            $table->enum('estado', ['1', '2', '3'])->default('1'); //'1: pendiente', '2: completada', '3: cancelada'
             $table->date('fecha_entrega');
             $table->timestamps();
         });
