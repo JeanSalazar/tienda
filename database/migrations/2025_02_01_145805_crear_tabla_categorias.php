@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cupones', function (Blueprint $table) {
+        Schema::create('categorias', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo')->unique();
-            $table->string('tipo'); // porcentual o fijo
-            $table->decimal('valor', 8, 2);
-            $table->integer('usos_maximos');
-            $table->integer('usos_actuales')->default(0);
-            $table->timestamps();
+            $table->string('descripcion');
+            $table->dateTime("fecha_creacion");
+            $table->dateTime("fecha_actualizacion");
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cupones');
+        Schema::dropIfExists('categorias');
     }
 };

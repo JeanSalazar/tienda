@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promociones', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+
+            $table->foreignId('usuario_id')
+                ->nullable()
+                ->constrained('usuarios')
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+
+            $table->string('accion');
             $table->text('descripcion');
-            $table->string('tipo'); // porcentual o fijo
-            $table->decimal('valor', 8, 2);
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin');
-            $table->timestamps();
+
+            $table->dateTime("fecha_creacion");
+            $table->dateTime("fecha_actualizacion");
         });
     }
 
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promociones');
+        Schema::dropIfExists('logs');
     }
 };

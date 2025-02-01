@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('ubigeos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('apellido');
-            $table->string('correo')->unique();
-            $table->string('contrasena');
-            $table->string('celular')->nullable();
-            $table->timestamps();
+            $table->string('ubigeo_reniec');
+            $table->string('departamento');
+            $table->string('provincia');
+            $table->string('distrito');
+            $table->dateTime("fecha_creacion");
+            $table->dateTime("fecha_actualizacion");
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('usuarios');
+        Schema::dropIfExists('ubigeos');
     }
 };

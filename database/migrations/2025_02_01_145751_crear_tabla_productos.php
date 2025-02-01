@@ -15,11 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('descripcion');
-            $table->decimal('precio_base', 8, 2);
-            $table->decimal('precio_final', 8, 2);
-            $table->integer('stock');
-            $table->foreignId('categoria_id')->constrained('categorias');
-            $table->timestamps();
+            $table->text('caracteristicas');
+            $table->decimal('precio', 8, 2);
+
+            $table->foreignId('categoria_id')
+                ->nullable()
+                ->constrained('categorias')
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+
+            $table->dateTime("fecha_creacion");
+            $table->dateTime("fecha_actualizacion");
         });
     }
 
