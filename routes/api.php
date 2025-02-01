@@ -49,7 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('productos', ProductoControlador::class);
     Route::apiResource('resenas', ResenaControlador::class);
     Route::apiResource('direcciones', DireccionControlador::class);
-    Route::get('ubigeos/importar', [DireccionControlador::class, 'importarCsv']);
+    Route::post('ubigeos/importar', [DireccionControlador::class, 'importarCsv']);
+    Route::get('/clientes/{cliente_id}/direcciones', [DireccionControlador::class, 'direccionesPorCliente']);
 
 
 

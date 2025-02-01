@@ -133,4 +133,14 @@ class DireccionControlador extends Controller
 
         return response()->json(['mensaje' => 'Ubigeos importados correctamente'], 201);
     }
+
+    public function direccionesPorCliente($cliente_id)
+    {
+        // Obtener las direcciones del cliente específico con sus relaciones
+        $direcciones = Direccion::where('cliente_id', $cliente_id)
+            ->with(['ubigeo', 'cliente'])
+            ->get();
+
+        return response()->json($direcciones);
+    }
 }
