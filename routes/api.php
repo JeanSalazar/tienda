@@ -63,19 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('ubigeos/importar', [DireccionControlador::class, 'importarCsv']);
     Route::get('/clientes/{cliente_id}/direcciones', [DireccionControlador::class, 'direccionesPorCliente']);
 
-
-
     Route::apiResource('ordenes', OrdenControlador::class);
     Route::get('ordenes/cliente/{cliente_id}', [OrdenControlador::class, 'ordenesPorCliente']);
-    Route::post('ordenes', [OrdenControlador::class, 'store']);
     Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
     Route::post('ordenes/{id}/pagar', [OrdenControlador::class, 'pagarConCulqi']);
 
-    // Productos
-
-
     Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
-
-    // Pagos
     Route::post('pagar', [PagoController::class, 'pagar']);
 });

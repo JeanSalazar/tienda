@@ -14,4 +14,10 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = ['usuario_id', 'nro_documento', 'celular', 'fecha_creacion', 'fecha_actualizacion'];
+
+    // En el modelo Cliente (app/Models/Cliente.php)
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class); // Asegúrate de que el modelo Usuario esté correctamente relacionado
+    }
 }

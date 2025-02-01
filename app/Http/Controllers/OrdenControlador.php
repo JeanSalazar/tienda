@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CompraPendiente;
 use Illuminate\Http\Request;
 use App\Models\Orden;
 use App\Models\Cliente;
@@ -11,6 +12,7 @@ use App\Models\Cupon;
 use App\Models\OrdenProducto;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class OrdenControlador extends Controller
 {
@@ -83,7 +85,7 @@ class OrdenControlador extends Controller
         }
 
         // Enviar correo electrónico
-        Mail::to($orden->cliente->email)->send(new CompraPendiente($orden));
+        Mail::to($orden->cliente->usuario->correo)->send(new CompraPendiente($orden));
 
         return response()->json($orden->load('productos'), 201);
     }
@@ -147,6 +149,9 @@ class OrdenControlador extends Controller
             $orden->update(['estado' => $request->estado]);
         }
 
+        // Enviar correo electrónico
+        Mail::to($orden->cliente->usuario->correo)->send(new CompraPendiente($orden));
+
         return response()->json($orden->load('productos'));
     }
 
@@ -189,7 +194,7 @@ class OrdenControlador extends Controller
             return response()->json(['message' => 'Orden no encontrada'], 404);
         }
 
-        $pdf = \PDF::loadView('boleta', compact('orden')); // Debes crear la vista 'boleta.blade.php'
+        $pdf = PDF::loadView('boleta', compact('orden')); // Debes crear la vista 'boleta.blade.php'
         return $pdf->download("boleta_{$orden->id}.pdf");
     }
 
