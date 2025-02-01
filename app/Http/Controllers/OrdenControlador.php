@@ -13,7 +13,7 @@ use App\Models\OrdenProducto;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\ServiceProvider as DomPDFServiceProvider;
-
+use Culqi\Culqi;
 
 class OrdenControlador extends Controller
 {
@@ -199,37 +199,69 @@ class OrdenControlador extends Controller
         $pdf = \PDF::loadView('boleta', compact('orden')); // Cargar la vista con los datos de la orden
         return $pdf->download("boleta_{$orden->id}.pdf");
     }
+
+
+
     // Pagar con Culqi
     public function pagarConCulqi(Request $request, $orden_id)
     {
+        // Buscar la orden
         $orden = Orden::find($orden_id);
 
+        // Verificar si la orden existe
         if (!$orden) {
             return response()->json(['message' => 'Orden no encontrada'], 404);
         }
 
+        // Validar que el token esté presente en la solicitud
         $request->validate([
             'token' => 'required|string',
         ]);
 
+        // Inicializar Culqi con la clave secreta desde el archivo .env
         $culqi = new \Culqi\Culqi(['api_key' => env('CULQI_SECRET_KEY')]);
 
         try {
+            // Crear el cargo en Culqi
             $cargo = $culqi->Charges->create([
-                "amount" => $orden->total * 100,
-                "currency_code" => "PEN",
-                "email" => $orden->cliente->email,
-                "source_id" => $request->token,
+                "amount" => $orden->total * 100,  // El monto en céntimos
+                "currency_code" => "PEN",  // Moneda
+                "email" => $orden->cliente->usuario->correo,  // Correo electrónico del cliente
+                "source_id" => $request->token,  // El token de la tarjeta
             ]);
+            dd($cargo);
+            // Verificar si el cargo fue exitoso
+            if ($cargo->status == 'approved') {
+                // Marcar la orden como pagada
+                $orden->estado = 2;  // Estado 2 podría representar "Pagado"
+                $orden->fecha_actualizacion = Carbon::now();
+                $orden->save();
 
-            // Marcar la orden como pagada
-            $orden->estado = 2;
-            $orden->fecha_actualizacion = Carbon::now();
-            $orden->save();
+                // Opcional: Enviar un correo de confirmación de pago o cualquier otra acción
 
-            return response()->json(['message' => 'Pago realizado con éxito', 'cargo' => $cargo], 200);
+                return response()->json([
+                    'message' => 'Pago realizado con éxito',
+                    'cargo' => $cargo
+                ], 200);
+            } else {
+                // Si el pago no es aprobado, mostrar el estado
+                return response()->json([
+                    'message' => 'El pago no fue aprobado',
+                    'cargo' => $cargo
+                ], 400);
+            }
+        } catch (\Culqi\Exceptions\ApiErrorException $e) {
+            // Capturar errores específicos de la API de Culqi
+            return response()->json([
+                'message' => 'Error al procesar el pago con Culqi',
+                'error' => $e->getMessage()
+            ], 400);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error en el pago', 'error' => $e->getMessage()], 400);
+            // Capturar cualquier otro error
+            return response()->json([
+                'message' => 'Error en el pago',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

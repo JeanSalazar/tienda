@@ -58,5 +58,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('ordenes/{id}/pagar', [OrdenControlador::class, 'pagarConCulqi']);
 
     Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
-    Route::post('pagar', [PagoController::class, 'pagar']);
+    Route::post('/pagar-culqi/{orden_id}', [OrdenControlador::class, 'pagarConCulqi']);
 });
