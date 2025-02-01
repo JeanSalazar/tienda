@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('ordenes_productos', function (Blueprint $table) {
             $table->id();
 
-            $table->dateTime("fecha_compra");
-
             $table->foreignId('producto_id')
                 ->nullable()
                 ->constrained('productos')

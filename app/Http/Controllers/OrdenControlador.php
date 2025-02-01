@@ -10,6 +10,7 @@ use App\Models\Producto;
 use App\Models\Cupon;
 use App\Models\OrdenProducto;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class OrdenControlador extends Controller
 {
@@ -80,6 +81,9 @@ class OrdenControlador extends Controller
                 'fecha_actualizacion' => now(),
             ]);
         }
+
+        // Enviar correo electrónico
+        Mail::to($orden->cliente->email)->send(new CompraPendiente($orden));
 
         return response()->json($orden->load('productos'), 201);
     }
@@ -169,6 +173,7 @@ class OrdenControlador extends Controller
             return response()->json(['message' => 'Orden no encontrada'], 404);
         }
 
+        OrdenProducto::where('orden_id', $orden->id)->delete();
         $orden->delete();
 
         return response()->json(['message' => 'Orden eliminada correctamente']);

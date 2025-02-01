@@ -32,8 +32,9 @@ class Orden extends Model
     // Relación con los Productos en la Orden
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'orden_productos')
-            ->withPivot('cantidad', 'precio_unitario');
+        return $this->belongsToMany(Producto::class, 'ordenes_productos')
+            ->withPivot('cantidad')
+            ->withTimestamps();
     }
 
     // Aplicar Cupón y calcular el descuento
