@@ -10,6 +10,7 @@ use App\Http\Controllers\ClienteControlador;
 use App\Http\Controllers\CuponControlador;
 use App\Http\Controllers\DireccionControlador;
 use App\Http\Controllers\LogControlador;
+use App\Http\Controllers\OrdenControlador;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PagoController;
@@ -64,12 +65,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-    Route::apiResource('ordenes', OrdenController::class);
+    Route::apiResource('ordenes', OrdenControlador::class);
+    Route::get('ordenes/cliente/{cliente_id}', [OrdenControlador::class, 'ordenesPorCliente']);
+    Route::post('ordenes', [OrdenControlador::class, 'store']);
+    Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
+    Route::post('ordenes/{id}/pagar', [OrdenControlador::class, 'pagarConCulqi']);
 
     // Productos
 
 
-    Route::get('ordenes/{id}/boleta', [OrdenController::class, 'generarBoleta']);
+    Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
 
     // Pagos
     Route::post('pagar', [PagoController::class, 'pagar']);

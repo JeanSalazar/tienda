@@ -16,21 +16,19 @@ return new class extends Migration
 
             $table->dateTime("fecha_compra");
 
-            $table->foreignId('cliente_id')
+            $table->foreignId('producto_id')
                 ->nullable()
-                ->constrained('clientes')
+                ->constrained('productos')
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
 
-            $table->foreignId('cupon_id')
+            $table->foreignId('orden_id')
                 ->nullable()
-                ->constrained('cupones')
+                ->constrained('ordenes')
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
 
-            $table->decimal('importe_venta', 8, 2);
-            $table->decimal('importe_igv', 8, 2);
-            $table->decimal('importe_total', 8, 2);
+            $table->integer('cantidad');
 
             $table->dateTime("fecha_creacion");
             $table->dateTime("fecha_actualizacion");
