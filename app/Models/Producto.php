@@ -18,14 +18,4 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class);
     }
-
-    public function getIgvAttribute()
-    {
-        return $this->precio_base * 0.18;
-    }
-
-    public function getPrecioFinalAttribute()
-    {
-        return $this->precio_base + $this->igv;
-    }
 }

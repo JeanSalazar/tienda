@@ -14,4 +14,16 @@ class Direccion extends Model
     protected $table = 'direcciones';
 
     protected $fillable = ['direccion', 'ubigeo_id', 'referencia', 'cliente_id', 'fecha_creacion', 'fecha_actualizacion'];
+
+    // Relación con Ubigeo
+    public function ubigeo()
+    {
+        return $this->belongsTo(Ubigeo::class);
+    }
+
+    // Relación con Cliente
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
+    }
 }
