@@ -52,10 +52,15 @@ class DireccionControlador extends Controller
      */
     public function show($id)
     {
-        // Buscar la dirección por su ID
-        $direccion = Direccion::with(['ubigeo', 'cliente'])->findOrFail($id);
+        $direccion = Direccion::with(['ubigeo', 'cliente'])->find($id);
 
-        return response()->json($direccion);
+        if (!$direccion) {
+            return response()->json([
+                'message' => 'La direccion no fue encontrada.'
+            ], 404);
+        }
+
+        return response()->json($direccion, 200);
     }
 
     /**
@@ -72,7 +77,14 @@ class DireccionControlador extends Controller
         ]);
 
         // Buscar la dirección
-        $direccion = Direccion::findOrFail($id);
+
+        $direccion = Direccion::find($id);
+
+        if (!$direccion) {
+            return response()->json([
+                'message' => 'La direccion no fue encontrado.'
+            ], 404);
+        }
 
         // Actualizar los datos de la dirección
         $direccion->update([
@@ -94,8 +106,16 @@ class DireccionControlador extends Controller
      */
     public function destroy($id)
     {
+        $direccion = Direccion::find($id);
+
+        if (!$direccion) {
+            return response()->json([
+                'message' => 'La dirección no fue encontrada.'
+            ], 404);
+        }
+
+
         // Buscar la dirección
-        $direccion = Direccion::findOrFail($id);
 
         // Eliminar la dirección
         $direccion->delete();

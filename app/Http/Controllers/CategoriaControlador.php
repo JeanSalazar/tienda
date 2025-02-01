@@ -6,7 +6,7 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 
-class CategoriaController extends Controller
+class CategoriaControlador extends Controller
 {
     // Listar todas las categorías
     public function index()

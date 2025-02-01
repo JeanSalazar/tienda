@@ -19,6 +19,20 @@ class ResenaControlador extends Controller
         return response()->json($resenas);
     }
 
+    public function resenasPorCliente($clienteId)
+    {
+        // Obtener las reseñas de un cliente específico con el producto relacionado
+        $resenas = Resena::with('producto')->where('cliente_id', $clienteId)->get();
+        return response()->json($resenas);
+    }
+
+    public function resenasPorProducto($productoId)
+    {
+        // Obtener las reseñas de un producto específico con el cliente relacionado
+        $resenas = Resena::with('cliente')->where('producto_id', $productoId)->get();
+        return response()->json($resenas);
+    }
+
     /**
      * Crear una nueva reseña.
      *

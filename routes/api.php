@@ -4,8 +4,10 @@ use App\Http\Controllers\AutenticacionControlador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoriaControlador;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteControlador;
+use App\Http\Controllers\CuponControlador;
 use App\Http\Controllers\DireccionControlador;
 use App\Http\Controllers\LogControlador;
 use App\Http\Controllers\ProductoController;
@@ -30,24 +32,32 @@ Route::post('olvido-contrasena', [AutenticacionControlador::class, 'olvidoContra
 
 
 
-Route::apiResource('permisos', PermisoControlador::class);
-Route::apiResource('roles', RolControlador::class);
 
-Route::post('roles/{rolId}/permisos/asignar', [RolPermisoControlador::class, 'asignarPermisos']);
-Route::delete('roles/{rolId}/permisos/{permisoId}', [RolPermisoControlador::class, 'quitarPermiso']);
-Route::get('roles/{rolId}/permisos', [RolPermisoControlador::class, 'mostrarPermisos']);
 
-Route::apiResource('categorias', CategoriaController::class);
-Route::apiResource('usuarios', UsuarioControlador::class);
+
 
 // Ordenes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logs', [LogControlador::class, 'crearLog']);
     Route::get('logs', [LogControlador::class, 'obtenerLogs']);
 
+    Route::apiResource('permisos', PermisoControlador::class);
+    Route::apiResource('roles', RolControlador::class);
+
+    Route::post('roles/{rolId}/permisos/asignar', [RolPermisoControlador::class, 'asignarPermisos']);
+    Route::delete('roles/{rolId}/permisos/{permisoId}', [RolPermisoControlador::class, 'quitarPermiso']);
+    Route::get('roles/{rolId}/permisos', [RolPermisoControlador::class, 'mostrarPermisos']);
+
+    Route::apiResource('categorias', CategoriaControlador::class);
+    Route::apiResource('usuarios', UsuarioControlador::class);
+
     Route::apiResource('clientes', ClienteControlador::class);
     Route::apiResource('productos', ProductoControlador::class);
+    Route::apiResource('cupones', CuponControlador::class);
+    Route::get('productos/categoria/{categoria_id}', [ProductoControlador::class, 'productosPorCategoria']);
     Route::apiResource('resenas', ResenaControlador::class);
+    Route::get('resenas/cliente/{clienteId}', [ResenaControlador::class, 'resenasPorCliente']);
+    Route::get('resenas/producto/{productoId}', [ResenaControlador::class, 'resenasPorProducto']);
     Route::apiResource('direcciones', DireccionControlador::class);
     Route::post('ubigeos/importar', [DireccionControlador::class, 'importarCsv']);
     Route::get('/clientes/{cliente_id}/direcciones', [DireccionControlador::class, 'direccionesPorCliente']);

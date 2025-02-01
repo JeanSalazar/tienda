@@ -2,45 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Models\Producto;
 
 class ProductoControlador extends Controller
 {
     /**
-     * Mostrar todos los productos.
-     *
-     * @return \Illuminate\Http\Response
+     * Obtener todos los productos.
      */
     public function index()
     {
-        $productos = Producto::with('categoria')->get();
+        $productos = Producto::all();
         return response()->json($productos);
     }
 
     /**
      * Crear un nuevo producto.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        // Validar los datos de la solicitud
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'caracteristicas' => 'required|string',
-            'precio' => 'required|numeric',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'categoria_id' => 'nullable|exists:categorias,id',
         ]);
 
-        // Crear el producto
         $producto = Producto::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'caracteristicas' => $request->caracteristicas,
             'precio' => $request->precio,
+            'stock' => $request->stock,
             'categoria_id' => $request->categoria_id,
             'fecha_creacion' => now(),
             'fecha_actualizacion' => now(),
@@ -53,17 +48,16 @@ class ProductoControlador extends Controller
     }
 
     /**
-     * Mostrar un producto específico por ID.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * Obtener un producto por su ID.
      */
     public function show($id)
     {
-        $producto = Producto::with('categoria')->find($id);
+        $producto = Producto::find($id);
 
         if (!$producto) {
-            return response()->json(['mensaje' => 'Producto no encontrado'], 404);
+            return response()->json([
+                'message' => 'El producto no fue encontrado.'
+            ], 404);
         }
 
         return response()->json($producto);
@@ -71,37 +65,29 @@ class ProductoControlador extends Controller
 
     /**
      * Actualizar un producto existente.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        // Validar los datos de la solicitud
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-            'caracteristicas' => 'required|string',
-            'precio' => 'required|numeric',
-            'categoria_id' => 'nullable|exists:categorias,id',
-        ]);
-
         $producto = Producto::find($id);
 
         if (!$producto) {
-            return response()->json(['mensaje' => 'Producto no encontrado'], 404);
+            return response()->json([
+                'message' => 'El producto no fue encontrado.'
+            ], 404);
         }
 
-        // Actualizar el producto
-        $producto->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'caracteristicas' => $request->caracteristicas,
-            'precio' => $request->precio,
-            'categoria_id' => $request->categoria_id,
-            'fecha_actualizacion' => now(),
+        $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'descripcion' => 'sometimes|string',
+            'caracteristicas' => 'sometimes|string',
+            'precio' => 'sometimes|numeric|min:0',
+            'stock' => 'sometimes|integer|min:0',
+            'categoria_id' => 'nullable|exists:categorias,id',
         ]);
+
+        $producto->update($request->all());
+        $producto->fecha_actualizacion = now();
+        $producto->save();
 
         return response()->json([
             'mensaje' => 'Producto actualizado con éxito',
@@ -111,21 +97,30 @@ class ProductoControlador extends Controller
 
     /**
      * Eliminar un producto.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         $producto = Producto::find($id);
 
         if (!$producto) {
-            return response()->json(['mensaje' => 'Producto no encontrado'], 404);
+            return response()->json([
+                'message' => 'El producto no fue encontrado.'
+            ], 404);
         }
 
-        // Eliminar el producto
         $producto->delete();
 
-        return response()->json(['mensaje' => 'Producto eliminado con éxito']);
+        return response()->json([
+            'message' => 'Producto eliminado correctamente.'
+        ], 200);
+    }
+
+    /**
+     * Obtener productos según categoría.
+     */
+    public function productosPorCategoria($categoria_id)
+    {
+        $productos = Producto::where('categoria_id', $categoria_id)->get();
+        return response()->json($productos);
     }
 }
