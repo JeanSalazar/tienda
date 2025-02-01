@@ -7,82 +7,89 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
             margin: 0;
             padding: 20px;
         }
         .header {
             text-align: center;
         }
-        .header img {
-            width: 150px;
-            margin-bottom: 20px;
+        .logo {
+            max-width: 150px;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .header p {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
+        .boleta {
             margin-top: 20px;
         }
-        .table, .table th, .table td {
+        .boleta table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .boleta table, th, td {
             border: 1px solid #ddd;
         }
-        .table th, .table td {
+        th, td {
             padding: 8px;
             text-align: left;
         }
         .total {
-            margin-top: 20px;
-            text-align: right;
-        }
-        .total p {
-            font-size: 18px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
+    <!-- Header with logo -->
     <div class="header">
-        <!-- Logo -->
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo de la tienda">
-        <h1>Boleta de Compra</h1>
-        <p>Cliente: {{ $orden->cliente->nombre }}</p>
-        <p>Fecha: {{ \Carbon\Carbon::parse($orden->fecha_compra)->format('d/m/Y') }}</p>
+        <img src="{{ public_path('images/logo.png') }}" alt="Logo de la Tienda" class="logo">
+
+        <h2>Boleta de Compra</h2>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($orden->productos as $producto)
-                <tr>
-                    <td>{{ $producto->nombre }}</td>
-                    <td>{{ $producto->pivot->cantidad }}</td>
-                    <td>{{ number_format($producto->precio, 2) }}</td>
-                    <td>{{ number_format($producto->pivot->cantidad * $producto->precio, 2) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <!-- Order details -->
+    <div class="boleta">
+        <p><strong>Orden ID:</strong> {{ $orden->id }}</p>
+        <p><strong>Cliente:</strong> {{ $orden->cliente->nombre }}</p>
+        <p><strong>Fecha de compra:</strong> {{ $orden->fecha_compra }}</p>
 
-    <div class="total">
-        <p>Total: S/. {{ number_format($orden->importe_total, 2) }}</p>
-        <p>IGV (18%): S/. {{ number_format($orden->importe_igv, 2) }}</p>
-        <p><strong>Total a Pagar: S/. {{ number_format($orden->importe_venta, 2) }}</strong></p>
+        <!-- Products table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($orden->productos as $producto)
+                    <tr>
+                        <td>{{ $producto->nombre }}</td>
+                        <td>{{ $producto->pivot->cantidad }}</td>
+                        <td>{{ number_format($producto->precio, 2) }}</td>
+                        <td>{{ number_format($producto->pivot->cantidad * $producto->precio, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Cupon details -->
+        @if($orden->cupon)
+            <p><strong>Cupon Aplicado:</strong>
+                @if($orden->cupon->tipo_descuento == 1)
+                    Descuento por porcentaje: {{ $orden->cupon->valor_descuento }}%
+                @else
+                    Descuento fijo: S/. {{ number_format($orden->cupon->valor_descuento, 2) }}
+                @endif
+            </p>
+        @else
+            <p>No se aplicó ningún cupón</p>
+        @endif
+
+        <!-- Totals -->
+        <p class="total"><strong>Subtotal:</strong> S/. {{ number_format($orden->importe_preliminar, 2) }}</p>
+        <p class="total"><strong>Descuento:</strong> S/. {{ number_format($orden->importe_descuento, 2) }}</p>
+        <p class="total"><strong>Importe IGV:</strong> S/. {{ number_format($orden->importe_igv, 2) }}</p>
+        <p class="total"><strong>Importe Total:</strong> S/. {{ number_format($orden->importe_total, 2) }}</p>
     </div>
 
 </body>

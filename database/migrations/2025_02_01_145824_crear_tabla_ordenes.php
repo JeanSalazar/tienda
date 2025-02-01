@@ -31,6 +31,7 @@ return new class extends Migration
             $table->decimal('importe_total', 8, 2);
             $table->decimal('importe_igv', 8, 2);
             $table->decimal('importe_venta', 8, 2);
+            $table->decimal('importe_descuento', 8, 2);
 
             $table->enum("estado", [1, 2, 3])->default(1);  // 1: Pendiente de Pago, 2: Pagado, 3: Enviado
 

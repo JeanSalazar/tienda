@@ -27,17 +27,6 @@ Route::post('registro', [AutenticacionControlador::class, 'registro']);
 Route::post('login', [AutenticacionControlador::class, 'login'])->name('login');
 Route::post('olvido-contrasena', [AutenticacionControlador::class, 'olvidoContrasena']);
 
-
-
-
-
-
-
-
-
-
-
-// Ordenes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logs', [LogControlador::class, 'crearLog']);
     Route::get('logs', [LogControlador::class, 'obtenerLogs']);

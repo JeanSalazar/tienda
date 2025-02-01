@@ -12,7 +12,8 @@ use App\Models\Cupon;
 use App\Models\OrdenProducto;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\ServiceProvider as DomPDFServiceProvider;
+
 
 class OrdenControlador extends Controller
 {
@@ -56,9 +57,9 @@ class OrdenControlador extends Controller
             }
         }
 
-        $importe_total = max($importe_preliminar - $importe_descuento, 0);
-        $importe_igv = $importe_total * 0.18;
-        $importe_venta = $importe_total - $importe_igv;
+        $importe_venta = max($importe_preliminar - $importe_descuento, 0);
+        $importe_igv = $importe_venta * 0.18;
+        $importe_total = $importe_venta + $importe_igv;
 
         $orden = Orden::create([
             'cliente_id' => $request->cliente_id,
@@ -67,6 +68,7 @@ class OrdenControlador extends Controller
             'importe_preliminar' => $importe_preliminar,
             'importe_total' => $importe_total,
             'importe_venta' => $importe_venta,
+            'importe_descuento' => $importe_descuento,
             'importe_igv' => $importe_igv,
             'estado' => 1, // Pendiente de pago
             'fecha_creacion' => now(),
@@ -132,14 +134,15 @@ class OrdenControlador extends Controller
                 }
             }
 
-            $importe_total = max($importe_preliminar - $importe_descuento, 0);
-            $importe_igv = $importe_total * 0.18;
-            $importe_venta = $importe_total - $importe_igv;
+            $importe_venta = max($importe_preliminar - $importe_descuento, 0);
+            $importe_igv = $importe_venta * 0.18;
+            $importe_total = $importe_venta + $importe_igv;
 
             $orden->update([
                 'importe_preliminar' => $importe_preliminar,
                 'importe_total' => $importe_total,
                 'importe_venta' => $importe_venta,
+                'importe_descuento' => $importe_descuento,
                 'importe_igv' => $importe_igv,
                 'fecha_actualizacion' => now(),
             ]);
@@ -185,7 +188,6 @@ class OrdenControlador extends Controller
     }
 
 
-    // Generar boleta en PDF
     public function generarBoleta($orden_id)
     {
         $orden = Orden::with('cliente', 'productos', 'cupon')->find($orden_id);
@@ -194,10 +196,9 @@ class OrdenControlador extends Controller
             return response()->json(['message' => 'Orden no encontrada'], 404);
         }
 
-        $pdf = PDF::loadView('boleta', compact('orden')); // Debes crear la vista 'boleta.blade.php'
+        $pdf = \PDF::loadView('boleta', compact('orden')); // Cargar la vista con los datos de la orden
         return $pdf->download("boleta_{$orden->id}.pdf");
     }
-
     // Pagar con Culqi
     public function pagarConCulqi(Request $request, $orden_id)
     {

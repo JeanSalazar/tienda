@@ -14,7 +14,7 @@ class Orden extends Model
 
     protected $table = 'ordenes';
 
-    protected $fillable = ['cliente_id', 'fecha_compra', 'fecha_creacion', 'fecha_actualizacion', 'cupon_id', 'estado', 'importe_preliminar', 'importe_igv', 'importe_total', 'importe_venta'];
+    protected $fillable = ['cliente_id', 'fecha_compra', 'fecha_creacion', 'fecha_actualizacion', 'cupon_id', 'estado', 'importe_descuento', 'importe_preliminar', 'importe_igv', 'importe_total', 'importe_venta'];
 
 
     // Relación con Cliente
