@@ -17,8 +17,16 @@ Route::post('registro', [AutenticacionControlador::class, 'registro']);
 Route::post('login', [AutenticacionControlador::class, 'login'])->name('login');
 Route::post('olvido-contrasena', [AutenticacionControlador::class, 'olvidoContrasena']);
 
+
+
+Route::apiResource('permisos', PermisoControlador::class);
+Route::apiResource('roles', RolControlador::class);
+
 // Ordenes
 Route::middleware('auth:sanctum')->group(function () {
+
+
+
     Route::apiResource('ordenes', OrdenController::class);
     Route::apiResource('categorias', CategoriaController::class);
     // Productos
@@ -29,11 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Pagos
     Route::post('pagar', [PagoController::class, 'pagar']);
 
-    // CRUD Roles
-    Route::apiResource('roles', RolControlador::class);
 
-    // CRUD Permisos
-    Route::apiResource('permisos', PermisoControlador::class);
 
     // Asignar roles y permisos a usuarios
     Route::post('usuarios/{id}/asignar-rol', [UsuarioRolPermisoControlador::class, 'asignarRol']);

@@ -9,6 +9,9 @@ class OrdenProducto extends Model
 {
     use HasFactory;
 
+    const CREATED_AT = 'fecha_creacion';
+    const UPDATED_AT = 'fecha_actualizacion';
+    
 
     protected $table = 'ordenes_productos';
 
