@@ -14,16 +14,16 @@ use App\Http\Controllers\UsuarioRolPermisoControlador;
 
 // Autenticación
 Route::post('registro', [AutenticacionControlador::class, 'registro']);
-Route::post('login', [AutenticacionControlador::class, 'login']);
+Route::post('login', [AutenticacionControlador::class, 'login'])->name('login');
 Route::post('olvido-contrasena', [AutenticacionControlador::class, 'olvidoContrasena']);
-
-// Productos
-Route::apiResource('productos', ProductoController::class);
 
 // Ordenes
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('ordenes', OrdenController::class);
     Route::apiResource('categorias', CategoriaController::class);
+    // Productos
+    Route::apiResource('productos', ProductoController::class);
+
     Route::get('ordenes/{id}/boleta', [OrdenController::class, 'generarBoleta']);
 
     // Pagos
@@ -40,6 +40,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('usuarios/{id}/quitar-rol', [UsuarioRolPermisoControlador::class, 'quitarRol']);
     Route::post('usuarios/{id}/asignar-permiso', [UsuarioRolPermisoControlador::class, 'asignarPermiso']);
     Route::post('usuarios/{id}/quitar-permiso', [UsuarioRolPermisoControlador::class, 'quitarPermiso']);
-
 });
-

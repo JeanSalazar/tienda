@@ -14,16 +14,15 @@ class OrdenSeeder extends Seeder
      */
     public function run(): void
     {
-       // Crear 20 órdenes falsas
+        // Crear 20 órdenes falsas
 
-       Usuario::all()->each(function ($usuario) {
-        Orden::factory()->create([
-            'usuario_id' => $usuario->id,
-            'total' => 930.79,
-            'estado' => '2',
-            'fecha_entrega' => now()->addDays(15),
-        ]);
-    });
-    
+        Usuario::all()->each(function ($usuario) {
+            Orden::factory()->create([
+                'usuario_id' => $usuario->id,
+                'total' => 930.79,
+                'estado' => '2',
+                'fecha_entrega' => now()->addDays(15),
+            ]);
+        });
     }
 }

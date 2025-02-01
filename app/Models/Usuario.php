@@ -14,7 +14,9 @@ class Usuario extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens, Notifiable, HasFactory, HasRoles;
 
-    protected $fillable = ['nombre', 'correo', 'apellido', 'celular', 'contrasena'];
+    protected $table = 'usuarios';
+
+    protected $fillable = ['nombre', 'correo', 'apellido', 'estado', 'contrasena', 'rol_id', 'fecha_creacion', 'fecha_actualizacion'];
     protected $hidden = ['contrasena'];
 
     // Método para obtener la contraseña hasheada
