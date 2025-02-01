@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,6 @@ use Illuminate\Support\Facades\Password;
 
 class AutenticacionControlador extends Controller
 {
-
     public function registro(Request $request)
     {
         $request->validate([
@@ -20,6 +20,7 @@ class AutenticacionControlador extends Controller
             'correo' => 'required|string|email',
             'celular' => 'nullable|string|regex:/^[0-9]{9}$/',
             'contrasena' => 'required|string|confirmed',
+            'nro_documento' => 'required|string',
         ]);
 
         // Verificar si el correo ya está registrado
@@ -27,15 +28,27 @@ class AutenticacionControlador extends Controller
             return response()->json(['error' => 'El correo ya está registrado.'], 422);
         }
 
+        // Crear el usuario
         $usuario = Usuario::create([
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'celular' => $request->celular,
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
             'correo' => $request->correo,
             'contrasena' => Hash::make($request->contrasena), // Asegúrate de usar Hash::make
+            'estado' => 1, // Estado predeterminado activo
+            'rol_id' => 1, // Suponiendo que se asigna un rol por defecto, puedes cambiarlo según tus necesidades
         ]);
 
-        return response()->json($usuario, 201);
+        // Crear el cliente asociado al usuario
+        $cliente = Cliente::create([
+            'usuario_id' => $usuario->id,
+            'nro_documento' => $request->nro_documento,
+            'celular' => $request->celular,
+        ]);
+
+        return response()->json([
+            'usuario' => $usuario,
+            'cliente' => $cliente
+        ], 201);
     }
 
     public function login(Request $request)
@@ -59,17 +72,14 @@ class AutenticacionControlador extends Controller
         return response()->json(['usuario' => $usuario, 'token' => $token], 200);
     }
 
-
-
-
     public function olvidoContrasena(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:usuarios,correo'
+            'correo' => 'required|email|exists:usuarios,correo'
         ]);
 
         $status = Password::sendResetLink([
-            'email' => $request->email
+            'email' => $request->correo
         ]);
 
         return $status === Password::RESET_LINK_SENT

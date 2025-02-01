@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // O Laravel\Passport\HasApiTokens según el caso
 
 
-class Usuario extends Authenticatable implements CanResetPassword
+class Usuario extends Authenticatable
 {
     use HasApiTokens, Notifiable, HasFactory;
 
@@ -25,5 +25,11 @@ class Usuario extends Authenticatable implements CanResetPassword
     public function getAuthPassword()
     {
         return $this->contrasena;
+    }
+
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->correo;
     }
 }

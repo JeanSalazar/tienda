@@ -5,12 +5,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ClienteControlador;
+use App\Http\Controllers\LogControlador;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PermisoControlador;
 use App\Http\Controllers\RolControlador;
 use App\Http\Controllers\RolPermisoControlador;
+use App\Http\Controllers\UsuarioControlador;
 use App\Http\Controllers\UsuarioRolPermisoControlador;
 
 // Autenticación
@@ -32,10 +35,15 @@ Route::delete('roles/{rolId}/permisos/{permisoId}', [RolPermisoControlador::clas
 Route::get('roles/{rolId}/permisos', [RolPermisoControlador::class, 'mostrarPermisos']);
 
 Route::apiResource('categorias', CategoriaController::class);
-//Route::apiResource('usuarios', UsuarioControlador::class);
+Route::apiResource('usuarios', UsuarioControlador::class);
 
 // Ordenes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logs', [LogControlador::class, 'crearLog']);
+    Route::get('/logs', [LogControlador::class, 'obtenerLogs']);
+
+    Route::apiResource('clientes', ClienteControlador::class);
+
 
 
     Route::apiResource('ordenes', OrdenController::class);

@@ -43,6 +43,7 @@ class CrearBaseDatos extends Command
             '2025_02_01_145824_crear_tabla_ordenes.php',
             '2025_02_01_145829_crear_tabla_ordenes_productos.php',
             '2025_02_01_145833_crear_tabla_delivery.php',
+            '2025_02_01_172736_create_password_reset_tokens_table.php'
         ];
 
         foreach ($migrations as $migration) {
