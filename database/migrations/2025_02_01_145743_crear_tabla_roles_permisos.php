@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles_permisos', function (Blueprint $table) {
+        Schema::create('rol_permiso', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('rol_id')
@@ -26,8 +27,10 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
 
-            $table->dateTime("fecha_creacion");
-            $table->dateTime("fecha_actualizacion");
+            // Cambiar a timestamp para manejar automáticamente las fechas
+            $table->timestamp('fecha_creacion')->useCurrent(); // Establecer la fecha actual por defecto para fecha_creacion
+            $table->timestamp('fecha_actualizacion')->useCurrent()->nullable()->onUpdate(DB::raw('CURRENT_TIMESTAMP')); // Actualizar automáticamente fecha_actualizacion
+
         });
     }
 
@@ -36,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles_permisos');
+        Schema::dropIfExists('rol_permiso');
     }
 };

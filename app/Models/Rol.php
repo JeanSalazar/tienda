@@ -17,4 +17,10 @@ class Rol extends Model
 
 
     protected $fillable = ['descripcion', 'fecha_creacion', 'fecha_actualizacion'];
+
+    // Relación muchos a muchos con permisos
+    public function permisos()
+    {
+        return $this->belongsToMany(Permiso::class, 'rol_permiso');
+    }
 }

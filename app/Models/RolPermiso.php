@@ -11,8 +11,8 @@ class RolPermiso extends Model
 
     const CREATED_AT = 'fecha_creacion';
     const UPDATED_AT = 'fecha_actualizacion';
-    
-    protected $table = 'roles_permisos';
 
-    protected $fillable = ['permiso_id', 'rol_id', 'fecha_creacion', 'fecha_actualizacion'];
+    protected $table = 'rol_permiso';
+
+    protected $fillable = ['permiso_id', 'rol_id'];
 }

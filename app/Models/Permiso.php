@@ -10,11 +10,17 @@ class Permiso extends Model
 {
     use HasFactory;
 
-    
+
     const CREATED_AT = 'fecha_creacion';
     const UPDATED_AT = 'fecha_actualizacion';
 
     protected $table = 'permisos';
 
     protected $fillable = ['descripcion', 'fecha_creacion', 'fecha_actualizacion'];
+
+    // Relación muchos a muchos con roles
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'rol_permiso');
+    }
 }

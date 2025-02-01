@@ -10,6 +10,7 @@ use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PermisoControlador;
 use App\Http\Controllers\RolControlador;
+use App\Http\Controllers\RolPermisoControlador;
 use App\Http\Controllers\UsuarioRolPermisoControlador;
 
 // Autenticación
@@ -19,16 +20,26 @@ Route::post('olvido-contrasena', [AutenticacionControlador::class, 'olvidoContra
 
 
 
+
+
+
+
 Route::apiResource('permisos', PermisoControlador::class);
 Route::apiResource('roles', RolControlador::class);
+
+Route::post('roles/{rolId}/permisos/asignar', [RolPermisoControlador::class, 'asignarPermisos']);
+Route::delete('roles/{rolId}/permisos/{permisoId}', [RolPermisoControlador::class, 'quitarPermiso']);
+Route::get('roles/{rolId}/permisos', [RolPermisoControlador::class, 'mostrarPermisos']);
+
+Route::apiResource('categorias', CategoriaController::class);
+//Route::apiResource('usuarios', UsuarioControlador::class);
 
 // Ordenes
 Route::middleware('auth:sanctum')->group(function () {
 
 
-
     Route::apiResource('ordenes', OrdenController::class);
-    Route::apiResource('categorias', CategoriaController::class);
+
     // Productos
     Route::apiResource('productos', ProductoController::class);
 
@@ -36,12 +47,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Pagos
     Route::post('pagar', [PagoController::class, 'pagar']);
-
-
-
-    // Asignar roles y permisos a usuarios
-    Route::post('usuarios/{id}/asignar-rol', [UsuarioRolPermisoControlador::class, 'asignarRol']);
-    Route::post('usuarios/{id}/quitar-rol', [UsuarioRolPermisoControlador::class, 'quitarRol']);
-    Route::post('usuarios/{id}/asignar-permiso', [UsuarioRolPermisoControlador::class, 'asignarPermiso']);
-    Route::post('usuarios/{id}/quitar-permiso', [UsuarioRolPermisoControlador::class, 'quitarPermiso']);
 });

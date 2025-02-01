@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-
     // Listar todas las categorías
     public function index()
     {
@@ -19,30 +18,65 @@ class CategoriaController extends Controller
     // Mostrar una categoría específica
     public function show($id)
     {
-        $categoria = Categoria::findOrFail($id);
+        $categoria = Categoria::find($id);
+
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'La categoría no fue encontrada.'
+            ], 404);
+        }
+
         return response()->json($categoria);
     }
 
     // Crear una nueva categoría
     public function store(Request $request)
     {
+        // Validar la solicitud
         $request->validate([
             'descripcion' => 'required|string|unique:categorias,descripcion',
+        ], [
+            'descripcion.required' => 'La descripción de la categoría es obligatoria.',
+            'descripcion.unique' => 'La descripción de la categoría ya existe.',
+            'descripcion.string' => 'La descripción debe ser una cadena de texto válida.',
         ]);
 
-        $categoria = Categoria::create($request->all());
+        // Crear la nueva categoría
+        $categoria = Categoria::create([
+            'descripcion' => $request->descripcion,
+            'fecha_creacion' => now(),
+            'fecha_actualizacion' => now(),
+        ]);
+
         return response()->json($categoria, 201);
     }
 
     // Actualizar una categoría existente
     public function update(Request $request, $id)
     {
+        // Validar la solicitud
         $request->validate([
             'descripcion' => 'sometimes|string|unique:categorias,descripcion,' . $id,
+        ], [
+            'descripcion.sometimes' => 'La descripción de la categoría es opcional, pero debe ser válida si se proporciona.',
+            'descripcion.string' => 'La descripción debe ser una cadena de texto válida.',
+            'descripcion.unique' => 'La descripción de la categoría ya existe.',
         ]);
 
-        $categoria = Categoria::findOrFail($id);
-        $categoria->update($request->all());
+        // Buscar la categoría por ID
+        $categoria = Categoria::find($id);
+
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'La categoría no fue encontrada.'
+            ], 404);
+        }
+
+        // Actualizar la categoría
+        $categoria->update([
+            'descripcion' => $request->descripcion,
+            'fecha_actualizacion' => now(),
+        ]);
 
         return response()->json($categoria, 200);
     }
@@ -50,13 +84,23 @@ class CategoriaController extends Controller
     // Eliminar una categoría
     public function destroy($id)
     {
-        Producto::where('categoria_id', 2)->delete();
+        // Buscar la categoría por ID
+        $categoria = Categoria::find($id);
 
-        $categoria = Categoria::findOrFail($id);
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'La categoría no fue encontrada.'
+            ], 404);
+        }
+
+        // Eliminar los productos asociados a esta categoría (si es necesario)
+        Producto::where('categoria_id', $id)->delete();
+
+        // Eliminar la categoría
         $categoria->delete();
 
-        return response()->json(null, 204);
+        return response()->json([
+            'message' => 'Categoria eliminada correctamente.'
+        ], 200);
     }
-
-
 }
