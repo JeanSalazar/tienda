@@ -55,4 +55,10 @@ class Orden extends Model
 
         return $subtotal;
     }
+
+    // Relación uno a uno con Delivery (una orden tiene un delivery)
+    public function delivery()
+    {
+        return $this->hasOne(Delivery::class, 'orden_id');
+    }
 }

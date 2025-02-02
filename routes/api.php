@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoriaControlador;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteControlador;
 use App\Http\Controllers\CuponControlador;
+use App\Http\Controllers\DeliveryControlador;
 use App\Http\Controllers\DireccionControlador;
 use App\Http\Controllers\LogControlador;
 use App\Http\Controllers\OrdenControlador;
@@ -59,4 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('ordenes/{id}/boleta', [OrdenControlador::class, 'generarBoleta']);
     Route::post('/pagar-culqi/{orden_id}', [OrdenControlador::class, 'pagarConCulqi']);
+
+    Route::get('deliveries', [DeliveryControlador::class, 'index']); // Obtener todos los deliveries
+    Route::get('deliveries/{id}', [DeliveryControlador::class, 'show']); // Obtener un delivery por ID
+    Route::post('deliveries', [DeliveryControlador::class, 'store']); // Crear un nuevo delivery
+    Route::put('deliveries/{id}', [DeliveryControlador::class, 'update']); // Actualizar un delivery
+    Route::delete('deliveries/{id}', [DeliveryControlador::class, 'destroy']); // Eliminar un delivery
 });

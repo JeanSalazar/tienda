@@ -26,4 +26,10 @@ class Direccion extends Model
     {
         return $this->belongsTo(Cliente::class);
     }
+
+    // Relación con delivery (una dirección puede tener muchos deliveries)
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class, 'direccion_id');
+    }
 }

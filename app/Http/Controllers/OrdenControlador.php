@@ -9,6 +9,7 @@ use App\Models\Orden;
 use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\Cupon;
+use App\Models\Delivery;
 use App\Models\OrdenProducto;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -86,6 +87,18 @@ class OrdenControlador extends Controller
             ]);
         }
 
+        // Crear un delivery relacionado con la orden
+        $delivery = Delivery::create([
+            'orden_id' => $orden->id,
+            'direccion_id' => $request->direccion_id,
+            'estado' => 1, // 1: Enviado
+            'fecha_envio' => Carbon::now(), // Fecha de envío (hoy)
+            'fecha_entrega_estimada' => Carbon::now()->addDays(7), // Fecha estimada de entrega (1 día después)
+            'fecha_creacion' => Carbon::now(),
+            'fecha_actualizacion' => Carbon::now(),
+        ]);
+
+
         // Enviar correo electrónico
         Mail::to($orden->cliente->usuario->correo)->send(new CompraPendiente($orden));
 
@@ -151,6 +164,7 @@ class OrdenControlador extends Controller
         if ($request->has('estado')) {
             $orden->update(['estado' => $request->estado]);
         }
+
 
         // Enviar correo electrónico
         Mail::to($orden->cliente->usuario->correo)->send(new CompraPendiente($orden));
@@ -224,7 +238,8 @@ class OrdenControlador extends Controller
         try {
             // Crear el cargo en Culqi
             $cargo = $culqi->Charges->create([
-                "amount" => $orden->total * 100,  // El monto en céntimos
+                //"amount" => $orden->total * 100,  // El monto en céntimos
+                "amount" => 100,
                 "currency_code" => "PEN",  // Moneda
                 "email" => $orden->cliente->usuario->correo,  // Correo electrónico del cliente
                 "source_id" => $request->token,  // El token de la tarjeta

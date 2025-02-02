@@ -31,7 +31,7 @@ return new class extends Migration
 
             $table->dateTime("fecha_envio");
             $table->dateTime("fecha_entrega_estimada");
-            $table->dateTime("fecha_entrega_real");
+            $table->dateTime("fecha_entrega_real")->nullable();
 
             $table->dateTime("fecha_creacion");
             $table->dateTime("fecha_actualizacion");
